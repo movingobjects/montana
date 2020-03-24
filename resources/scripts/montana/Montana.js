@@ -2,962 +2,957 @@
 // Namespace
 /////////////////////////////////////////////
 
-this.montana			= this.montana || { };
+this.montana = this.montana || { };
 
 
 (function() {
 
-	"use strict";
-
-
-	// Constructor
-	/////////////////////////////////////////////
-
-	function Montana($) {
-
-		// Imports
-		/////////////////////////////////////////////
-
-		var Range		= bwco.math.Range,
-			Keys		= bwco.utils.Keys,
-			Maths		= bwco.utils.Maths,
-			Random		= bwco.utils.Random;
-
-
-		// Constants
-		/////////////////////////////////////////////
-
-		var SHUFFLE_SWAP_COUNT		= 5000;
-
-		var SHUFFLES_PER_GAME		= 3,
-			RESTART_INTERVAL_SECS	= 0.05,
-			ACES_TIMEOUT_SECS		= 0.75;
-
-		var SPACING_X				= 50,
-			SPACING_Y				= 68;
-
-
-		// Elements
-		/////////////////////////////////////////////
-
-		var $doc			= $(document);
-		var $win			= $(window);
-		var $body			= $("body");
-
-		var $blanksList		= $("ul#blanks");
-		var $cardsList		= $("ul#cards");
-
-		var $newGameBtn		= $("button#new-game-btn");
-		var $restartBtn		= $("button#restart-btn");
-		var $shuffleBtn		= $("button#shuffle-btn");
-		var $undoBtn		= $("button#undo-btn");
-		var $hintsCheckbox	= $("input#hints-checkbox");
-
-		var $boardBlock		= $("#board-block")
-
-
-		// Private properties
-		/////////////////////////////////////////////
-
-		var _rows			= [
-			[
-				{ suit: 0, value: 1 },
-				{ suit: 0, value: 2 },
-				{ suit: 0, value: 3 },
-				{ suit: 0, value: 4 },
-				{ suit: 0, value: 5 },
-				{ suit: 0, value: 6 },
-				{ suit: 0, value: 7 },
-				{ suit: 0, value: 8 },
-				{ suit: 0, value: 9 },
-				{ suit: 0, value: 10 },
-				{ suit: 0, value: 11 },
-				{ suit: 0, value: 12 },
-				{ suit: 0, value: 13 }
-			],
-			[
-				{ suit: 1, value: 1 },
-				{ suit: 1, value: 2 },
-				{ suit: 1, value: 3 },
-				{ suit: 1, value: 4 },
-				{ suit: 1, value: 5 },
-				{ suit: 1, value: 6 },
-				{ suit: 1, value: 7 },
-				{ suit: 1, value: 8 },
-				{ suit: 1, value: 9 },
-				{ suit: 1, value: 10 },
-				{ suit: 1, value: 11 },
-				{ suit: 1, value: 12 },
-				{ suit: 1, value: 13 }
-			],
-			[
-				{ suit: 2, value: 1 },
-				{ suit: 2, value: 2 },
-				{ suit: 2, value: 3 },
-				{ suit: 2, value: 4 },
-				{ suit: 2, value: 5 },
-				{ suit: 2, value: 6 },
-				{ suit: 2, value: 7 },
-				{ suit: 2, value: 8 },
-				{ suit: 2, value: 9 },
-				{ suit: 2, value: 10 },
-				{ suit: 2, value: 11 },
-				{ suit: 2, value: 12 },
-				{ suit: 2, value: 13 }
-			],
-			[
-				{ suit: 3, value: 1 },
-				{ suit: 3, value: 2 },
-				{ suit: 3, value: 3 },
-				{ suit: 3, value: 4 },
-				{ suit: 3, value: 5 },
-				{ suit: 3, value: 6 },
-				{ suit: 3, value: 7 },
-				{ suit: 3, value: 8 },
-				{ suit: 3, value: 9 },
-				{ suit: 3, value: 10 },
-				{ suit: 3, value: 11 },
-				{ suit: 3, value: 12 },
-				{ suit: 3, value: 13 }
-			]
-		];
+  "use strict";
+
+
+
+  // Constructor
+  /////////////////////////////////////////////
+
+  function Montana($) {
+
+    // Imports
+    /////////////////////////////////////////////
+
+    var Range  = bwco.math.Range,
+        Keys   = bwco.utils.Keys,
+        Maths  = bwco.utils.Maths,
+        Random = bwco.utils.Random;
+
+
+    // Constants
+    /////////////////////////////////////////////
+
+    var SHUFFLE_SWAP_COUNT = 5000;
+
+    var RESTART_INTERVAL_SECS = 0.05,
+        ACES_TIMEOUT_SECS     = 0.75;
+
+    var SPACING_X = 50,
+        SPACING_Y = 68;
+
+
+    // Elements
+    /////////////////////////////////////////////
+
+    var $doc  = $(document);
+    var $win  = $(window);
+    var $body = $("body");
+
+    var $blanksList = $("ul#blanks");
+    var $cardsList  = $("ul#cards");
+
+    var $newGameBtn    = $("button#new-game-btn");
+    var $restartBtn    = $("button#restart-btn");
+    var $shuffleBtn    = $("button#shuffle-btn");
+    var $undoBtn       = $("button#undo-btn");
+    var $hintsCheckbox = $("input#hints-checkbox");
+
+    var $boardBlock = $("#board-block")
+
+
+    // Private properties
+    /////////////////////////////////////////////
+
+    var _rows      = [
+      [
+        { suit: 0, value: 1 },
+        { suit: 0, value: 2 },
+        { suit: 0, value: 3 },
+        { suit: 0, value: 4 },
+        { suit: 0, value: 5 },
+        { suit: 0, value: 6 },
+        { suit: 0, value: 7 },
+        { suit: 0, value: 8 },
+        { suit: 0, value: 9 },
+        { suit: 0, value: 10 },
+        { suit: 0, value: 11 },
+        { suit: 0, value: 12 },
+        { suit: 0, value: 13 }
+      ],
+      [
+        { suit: 1, value: 1 },
+        { suit: 1, value: 2 },
+        { suit: 1, value: 3 },
+        { suit: 1, value: 4 },
+        { suit: 1, value: 5 },
+        { suit: 1, value: 6 },
+        { suit: 1, value: 7 },
+        { suit: 1, value: 8 },
+        { suit: 1, value: 9 },
+        { suit: 1, value: 10 },
+        { suit: 1, value: 11 },
+        { suit: 1, value: 12 },
+        { suit: 1, value: 13 }
+      ],
+      [
+        { suit: 2, value: 1 },
+        { suit: 2, value: 2 },
+        { suit: 2, value: 3 },
+        { suit: 2, value: 4 },
+        { suit: 2, value: 5 },
+        { suit: 2, value: 6 },
+        { suit: 2, value: 7 },
+        { suit: 2, value: 8 },
+        { suit: 2, value: 9 },
+        { suit: 2, value: 10 },
+        { suit: 2, value: 11 },
+        { suit: 2, value: 12 },
+        { suit: 2, value: 13 }
+      ],
+      [
+        { suit: 3, value: 1 },
+        { suit: 3, value: 2 },
+        { suit: 3, value: 3 },
+        { suit: 3, value: 4 },
+        { suit: 3, value: 5 },
+        { suit: 3, value: 6 },
+        { suit: 3, value: 7 },
+        { suit: 3, value: 8 },
+        { suit: 3, value: 9 },
+        { suit: 3, value: 10 },
+        { suit: 3, value: 11 },
+        { suit: 3, value: 12 },
+        { suit: 3, value: 13 }
+      ]
+    ];
 
-		var _overCard		= null;
+    var _overCard    = null;
 
-		var _shufflesLeft,
-			_history;
+    var _totalShuffles,
+      _history;
 
-		var _acesTimeout;
+    var _acesTimeout;
 
 
-		// Event handlers
-		/////////////////////////////////////////////
+    // Event handlers
+    /////////////////////////////////////////////
 
-		function onNewGameClick(e) {
+    function onNewGameClick(e) {
 
-			startNewGame();
+      startNewGame();
 
-		}
-		function onRestartClick(e) {
+    }
+    function onRestartClick(e) {
 
-			restartGame();
+      restartGame();
 
-		}
-		function onUndoBtnClick(e) {
+    }
+    function onUndoBtnClick(e) {
 
-			undoLastMove();
+      undoLastMove();
 
-		}
-		function onShuffleBtnClick(e) {
+    }
+    function onShuffleBtnClick(e) {
 
-			reshuffle();
+      reshuffle();
 
-		}
+    }
 
-		function onCardOver(e) {
+    function onCardOver(e) {
 
-			var $el		= $(this);
-			var card	= getCardFromCardEl($el);
+      var $el    = $(this);
+      var card  = getCardFromCardEl($el);
 
-			if (card && card.placeable) {
-				_overCard	= card;
-				update();
-			}
+      if (card && card.placeable) {
+        _overCard  = card;
+        update();
+      }
 
-		}
-		function onCardOut(e) {
+    }
+    function onCardOut(e) {
 
-			_overCard	= null;
-			update();
+      _overCard  = null;
+      update();
 
-		}
-		function onCardClick(e) {
+    }
+    function onCardClick(e) {
 
-			var $el			= $(this);
-			var card		= getCardFromCardEl($el);
+      var $el      = $(this);
+      var card    = getCardFromCardEl($el);
 
-			if (!card) return;
+      if (!card) return;
 
-			var swapCard	= getMatchingAce(card);
+      var swapCard  = getMatchingAce(card);
 
-			if (swapCard) {
-				pushHistory();
-				swapCards(card, swapCard);
-			}
+      if (swapCard) {
+        pushHistory();
+        swapCards(card, swapCard);
+      }
 
-			_overCard		= null;
+      _overCard    = null;
 
-			update();
+      update();
 
-		}
+    }
 
-		function onBlankOver(e) {
+    function onBlankOver(e) {
 
-			var $el		= $(this);
-			var card	= getCardFromBlankEl($el);
+      var $el    = $(this);
+      var card  = getCardFromBlankEl($el);
 
-			if (card && !card.closed) {
-				_overCard	= card;
-				update();
-			}
+      if (card && !card.closed) {
+        _overCard  = card;
+        update();
+      }
 
-		}
-		function onBlankOut(e) {
+    }
+    function onBlankOut(e) {
 
-			_overCard	= null;
-			update();
+      _overCard  = null;
+      update();
 
-		}
-		function onBlankClick(e) {
+    }
+    function onBlankClick(e) {
 
-			var $el		= $(this);
-			var card	= getCardFromBlankEl($el);
+      var $el    = $(this);
+      var card  = getCardFromBlankEl($el);
 
-			if (!card) return;
-			if (card.closed) return;
+      if (!card) return;
+      if (card.closed) return;
 
-			var prevCard	= getPrevCard(card);
+      var prevCard  = getPrevCard(card);
 
-			while (prevCard && prevCard.value == 1) {
-				card		= prevCard;
-				prevCard	= getPrevCard(card);
-			}
+      while (prevCard && prevCard.value == 1) {
+        card    = prevCard;
+        prevCard  = getPrevCard(card);
+      }
 
-			var swapCard	= getMatchingCard(card);
+      var swapCard  = getMatchingCard(card);
 
-			if (swapCard) {
-				pushHistory();
-				swapCards(card, swapCard);
-			}
+      if (swapCard) {
+        pushHistory();
+        swapCards(card, swapCard);
+      }
 
-			_overCard		= null;
+      _overCard    = null;
 
-			update();
+      update();
 
 
-		}
+    }
 
-		function onKeyDown(e) {
+    function onKeyDown(e) {
 
-			switch(e.keyCode) {
+      switch(e.keyCode) {
 
-				case Keys.keyCodeOf("n"):
-					startNewGame();
-					break;
+        case Keys.keyCodeOf("n"):
+          startNewGame();
+          break;
 
-				case Keys.keyCodeOf("r"):
-					restartGame();
-					break;
+        case Keys.keyCodeOf("r"):
+          restartGame();
+          break;
 
-				case Keys.keyCodeOf("u"):
-					undoLastMove();
-					break;
+        case Keys.keyCodeOf("u"):
+          undoLastMove();
+          break;
 
-				case Keys.keyCodeOf("s"):
-					reshuffle();
-					break;
+        case Keys.keyCodeOf("s"):
+          reshuffle();
+          break;
 
-			 }
+       }
 
-		}
+    }
 
 
-		// Private methods
-		/////////////////////////////////////////////
+    // Private methods
+    /////////////////////////////////////////////
 
-		function initView() {
+    function initView() {
 
-			var templateBlank	= $.templates("#template-blank");
-			var templateCard	= $.templates("#template-card");
+      var templateBlank  = $.templates("#template-blank");
+      var templateCard  = $.templates("#template-card");
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-				for (var j = 0; j < row.length; j++) {
-					var card		= row[j];
+        for (var j = 0; j < row.length; j++) {
+          var card    = row[j];
 
-					// Blanks
-					/////////////////////////////////////////////
+          // Blanks
+          /////////////////////////////////////////////
 
-					var htmlBlank	= templateBlank.render();
-					var $blank		= $(htmlBlank);
-						$blank.data({
-							"row": i,
-							"col": j
-						})
-						$blank.css({
-							"left": j * SPACING_X,
-							"top": i * SPACING_Y
-						});
-						$blank.hover(onBlankOver, onBlankOut);
-						$blank.click(onBlankClick);
+          var htmlBlank  = templateBlank.render();
+          var $blank    = $(htmlBlank);
+            $blank.data({
+              "row": i,
+              "col": j
+            })
+            $blank.css({
+              "left": j * SPACING_X,
+              "top": i * SPACING_Y
+            });
+            $blank.hover(onBlankOver, onBlankOut);
+            $blank.click(onBlankClick);
 
-					$blanksList.append($blank)
+          $blanksList.append($blank)
 
-					// Cards
-					/////////////////////////////////////////////
+          // Cards
+          /////////////////////////////////////////////
 
-					var htmlCard	= templateCard.render(card);
-					var $card		= $(htmlCard);
-						$card.hover(onCardOver, onCardOut);
-						$card.click(onCardClick);
+          var htmlCard  = templateCard.render(card);
+          var $card    = $(htmlCard);
+            $card.hover(onCardOver, onCardOut);
+            $card.click(onCardClick);
 
-					card.$el		= $card
-					$cardsList.append(card.$el);
+          card.$el    = $card
+          $cardsList.append(card.$el);
 
-				}
-			}
+        }
+      }
 
-		}
-		function initEvents() {
+    }
+    function initEvents() {
 
-			$newGameBtn.click(onNewGameClick);
-			$restartBtn.click(onRestartClick);
-			$undoBtn.click(onUndoBtnClick);
-			$shuffleBtn.click(onShuffleBtnClick);
+      $newGameBtn.click(onNewGameClick);
+      $restartBtn.click(onRestartClick);
+      $undoBtn.click(onUndoBtnClick);
+      $shuffleBtn.click(onShuffleBtnClick);
 
-			$doc.keydown(onKeyDown);
+      $doc.keydown(onKeyDown);
 
-		}
+    }
 
-		function update() {
+    function update() {
 
-			updateValues();
-			updateCards();
-			updateBlanks();
-			updateHints();
-			updateBtns();
+      updateValues();
+      updateCards();
+      updateBlanks();
+      updateHints();
+      updateBtns();
 
-		}
-		function updateValues() {
+    }
+    function updateValues() {
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row			= _rows[i];
-				var rowInOrder	= true;
+      for (var i = 0; i < _rows.length; i++) {
+        var row      = _rows[i];
+        var rowInOrder  = true;
 
-				for (var j = 0; j < row.length; j++) {
-					var card			= row[j];
-						card.closed		= false;
-						card.start		= false;
-						card.placed		= false;
-						card.placeable	= false;
+        for (var j = 0; j < row.length; j++) {
+          var card      = row[j];
+            card.closed    = false;
+            card.start    = false;
+            card.placed    = false;
+            card.placeable  = false;
 
-					var prevCard		= row[j - 1];
+          var prevCard    = row[j - 1];
 
-					// Closed & start
-					/////////////////////////////////////////////
+          // Closed & start
+          /////////////////////////////////////////////
 
-					if (card.value == 1) {
-						if (prevCard) {
-							if (prevCard.closed || prevCard.value == 13) {
-								card.closed	= true;
-							}
-						} else {
-							card.start	= true;
-						}
-					}
+          if (card.value == 1) {
+            if (prevCard) {
+              if (prevCard.closed || prevCard.value == 13) {
+                card.closed  = true;
+              }
+            } else {
+              card.start  = true;
+            }
+          }
 
-					// Placed
-					/////////////////////////////////////////////
+          // Placed
+          /////////////////////////////////////////////
 
-					if (rowInOrder) {
-						if (prevCard) {
-							if (card.suit == prevCard.suit && card.value == j + 2) {
-								card.placed	= true;
-							}
-						} else {
-							if (card.value == 2) {
-								card.placed	= true;
-							}
-						}
-						rowInOrder	= card.placed;
-					}
+          if (rowInOrder) {
+            if (prevCard) {
+              if (card.suit == prevCard.suit && card.value == j + 2) {
+                card.placed  = true;
+              }
+            } else {
+              if (card.value == 2) {
+                card.placed  = true;
+              }
+            }
+            rowInOrder  = card.placed;
+          }
 
-					// Placeable
-					/////////////////////////////////////////////
+          // Placeable
+          /////////////////////////////////////////////
 
-					if (getMatchingAce(card)) {
-						card.placeable	= true;
-					}
+          if (getMatchingAce(card)) {
+            card.placeable  = true;
+          }
 
-				}
-			}
+        }
+      }
 
-		}
-		function updateCards() {
+    }
+    function updateCards() {
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
 
-					var $card	= card.$el;
-						$card.css({
-							"left": j * SPACING_X,
-							"top": i * SPACING_Y
-						});
+          var $card  = card.$el;
+            $card.css({
+              "left": j * SPACING_X,
+              "top": i * SPACING_Y
+            });
 
-						$card.toggleClass("placed", card.placed);
-						$card.toggleClass("placeable", card.placeable);
+            $card.toggleClass("placed", card.placed);
+            $card.toggleClass("placeable", card.placeable);
 
-				}
-			}
+        }
+      }
 
-		}
-		function updateBlanks() {
+    }
+    function updateBlanks() {
 
-			$blanksList.find("li").each(function(index) {
+      $blanksList.find("li").each(function(index) {
 
-				var $blank	= $(this);
-				var card	= getCardFromBlankEl($blank);
+        var $blank  = $(this);
+        var card  = getCardFromBlankEl($blank);
 
-				$blank.toggleClass("closed", card.closed);
-				$blank.toggleClass("start", card.start);
+        $blank.toggleClass("closed", card.closed);
+        $blank.toggleClass("start", card.start);
 
-			});
+      });
 
-		}
-		function updateHints() {
+    }
+    function updateHints() {
 
-			var hintsOn	= $hintsCheckbox.prop("checked");
+      var hintsOn  = $hintsCheckbox.prop("checked");
 
-			if (!hintsOn || !_overCard) {
-				unhighlight();
-			} else {
-				highlightMatching(_overCard);
-			}
+      if (!hintsOn || !_overCard) {
+        unhighlight();
+      } else {
+        highlightMatching(_overCard);
+      }
 
-		}
-		function updateBtns() {
+    }
+    function updateBtns() {
 
-			// Shuffle btn
-			/////////////////////////////////////////////
+      // Shuffle btn
+      /////////////////////////////////////////////
 
-			$shuffleBtn.text("Shuffle (" + _shufflesLeft + " left)")
+      $shuffleBtn.text("Shuffle (" + _totalShuffles + " used)")
 
-			$restartBtn.prop("disabled", !_history.length);
-			$shuffleBtn.prop("disabled", _shufflesLeft == 0);
-			$undoBtn.prop("disabled", !_history.length);
+      $restartBtn.prop("disabled", !_history.length);
+      $undoBtn.prop("disabled", !_history.length);
 
-		}
+    }
 
-		function startNewGame() {
+    function startNewGame() {
 
-			_shufflesLeft	= SHUFFLES_PER_GAME;
-			_history	= [];
+      _totalShuffles = 0;
+      _history       = [];
 
-			clearTimeout(_acesTimeout);
-			_acesTimeout	= setTimeout(fadeOutAces, ACES_TIMEOUT_SECS * 1000);
+      clearTimeout(_acesTimeout);
+      _acesTimeout  = setTimeout(fadeOutAces, ACES_TIMEOUT_SECS * 1000);
 
-			fadeInAces();
-			shuffleCards(getAllCards());
-			update();
+      fadeInAces();
+      shuffleCards(getAllCards());
+      update();
 
-			setTimeout(function() {
-				$cardsList.removeClass("unloaded");
-			}, 100);
+      setTimeout(function() {
+        $cardsList.removeClass("unloaded");
+      }, 100);
 
-		}
-		function restartGame() {
-			disableBoard();
-			stepRestart();
+    }
+    function restartGame() {
+      disableBoard();
+      stepRestart();
 
-		}
-		function reshuffle() {
+    }
+    function reshuffle() {
 
-			if (!_shufflesLeft) return;
+      pushHistory();
 
-			pushHistory();
+      shuffleCards(getUnplacedCards());
+      swapAcesToFront();
 
-			shuffleCards(getUnplacedCards());
-			swapAcesToFront();
+      _totalShuffles++;
 
-			_shufflesLeft--;
+      update();
 
-			update();
+    }
 
-		}
+    function swapCards(cardA, cardB) {
 
-		function swapCards(cardA, cardB) {
+      var locA          = findCard(cardA.suit, cardA.value);
+      var locB          = findCard(cardB.suit, cardB.value);
+      var tempA          = _rows[locA.row][locA.col];
+      _rows[locA.row][locA.col]  = _rows[locB.row][locB.col];
+      _rows[locB.row][locB.col]  = tempA;
 
-			var locA					= findCard(cardA.suit, cardA.value);
-			var locB					= findCard(cardB.suit, cardB.value);
-			var tempA					= _rows[locA.row][locA.col];
-			_rows[locA.row][locA.col]	= _rows[locB.row][locB.col];
-			_rows[locB.row][locB.col]	= tempA;
+    }
 
-		}
+    function unhighlight() {
 
-		function unhighlight() {
+      $cardsList.find("li").removeClass("hint");
+      $blanksList.find("li").removeClass("hint");
 
-			$cardsList.find("li").removeClass("hint");
-			$blanksList.find("li").removeClass("hint");
+    }
+    function highlightMatching(card) {
 
-		}
-		function highlightMatching(card) {
+      if (!card) return;
 
-			if (!card) return;
+      var matchCard  = null;
 
-			var matchCard	= null;
+      if (card.value == 1) {
+        var prevCard  = getPrevCard(card);
 
-			if (card.value == 1) {
-				var prevCard	= getPrevCard(card);
+        while (prevCard && prevCard.value == 1) {
+          card    = prevCard;
+          prevCard  = getPrevCard(card);
+        }
 
-				while (prevCard && prevCard.value == 1) {
-					card		= prevCard;
-					prevCard	= getPrevCard(card);
-				}
+        matchCard  = getMatchingCard(card);
 
-				matchCard	= getMatchingCard(card);
+      } else {
+        matchCard  = getMatchingAce(card);
 
-			} else {
-				matchCard	= getMatchingAce(card);
+      }
 
-			}
+      if (card) {
+        highlight(card);
+      }
 
-			if (card) {
-				highlight(card);
-			}
+      if (matchCard) {
+        highlight(matchCard);
+      }
 
-			if (matchCard) {
-				highlight(matchCard);
-			}
+    }
 
-		}
+    function highlight(card) {
 
-		function highlight(card) {
+      if (!card) return;
 
-			if (!card) return;
+      if (card.value == 1) {
+        $blanksList.find("li").each(function(index) {
 
-			if (card.value == 1) {
-				$blanksList.find("li").each(function(index) {
+          var $blank    = $(this);
+          var testCard  = getCardFromBlankEl($blank);
 
-					var $blank		= $(this);
-					var testCard	= getCardFromBlankEl($blank);
+          $blank.toggleClass("hint", testCard == card);
 
-					$blank.toggleClass("hint", testCard == card);
+        });
 
-				});
 
+      } else {
+        var $card  = $cardsList.find("li.suit-" + card.suit + ".value-" + card.value)
+          $card.addClass("hint");
 
-			} else {
-				var $card	= $cardsList.find("li.suit-" + card.suit + ".value-" + card.value)
-					$card.addClass("hint");
+      }
 
-			}
+    }
 
-		}
+    function disableBoard() {
 
-		function disableBoard() {
+      $boardBlock.show();
 
-			$boardBlock.show();
+    }
+    function enableBoard() {
 
-		}
-		function enableBoard() {
+      $boardBlock.hide();
 
-			$boardBlock.hide();
+    }
 
-		}
+    function pushHistory() {
 
-		function pushHistory() {
+      _history.push({
+        rows: makeRowsCopy()
+      });
 
-			_history.push({
-				rows: makeRowsCopy(),
-				shufflesLeft: _shufflesLeft
-			});
+    }
+    function undoLastMove() {
 
-		}
-		function undoLastMove() {
+      if (!_history) return;
+      if (!_history.length) return;
 
-			if (!_history) return;
-			if (!_history.length) return;
+      var lastMove  = _history.pop();
+      _rows      = lastMove.rows;
 
-			var lastMove	= _history.pop();
-			_rows			= lastMove.rows;
-			_shufflesLeft	= lastMove.shufflesLeft;
+      update();
 
-			update();
+    }
+    function stepRestart() {
 
-		}
-		function stepRestart() {
+      if (_history && _history.length) {
+        undoLastMove();
+        setTimeout(stepRestart, RESTART_INTERVAL_SECS * 1000);
+      } else {
+        enableBoard();
+      }
 
-			if (_history && _history.length) {
-				undoLastMove();
-				setTimeout(stepRestart, RESTART_INTERVAL_SECS * 1000);
-			} else {
-				enableBoard();
-			}
+    }
 
-		}
+    function shuffleCards(cards) {
 
-		function shuffleCards(cards) {
+      for (var i = 0; i < SHUFFLE_SWAP_COUNT; i++) {
 
-			for (var i = 0; i < SHUFFLE_SWAP_COUNT; i++) {
+        var cardA  = Random.item(cards);
+        var cardB  = Random.item(cards);
 
-				var cardA	= Random.item(cards);
-				var cardB	= Random.item(cards);
+        if (cardA != cardB) {
+          swapCards(cardA, cardB);
+        }
 
-				if (cardA != cardB) {
-					swapCards(cardA, cardB);
-				}
+      }
 
-			}
+    }
 
-		}
+    function fadeInAces() {
 
-		function fadeInAces() {
+      var $aces  = $cardsList.find("li.value-1");
+        $aces.stop(true).fadeIn(250);
 
-			var $aces	= $cardsList.find("li.value-1");
-				$aces.stop(true).fadeIn(250);
+    }
+    function fadeOutAces() {
 
-		}
-		function fadeOutAces() {
+      clearTimeout(_acesTimeout);
 
-			clearTimeout(_acesTimeout);
+      var $aces  = $cardsList.find("li.value-1");
+        $aces.stop(true).fadeOut(250);
 
-			var $aces	= $cardsList.find("li.value-1");
-				$aces.stop(true).fadeOut(250);
+    }
 
-		}
+    function swapAcesToFront() {
 
-		function swapAcesToFront() {
+      var aces    = getAces();
+      var frontCards  = getFirstUnplacedCardInRows();
 
-			var aces		= getAces();
-			var frontCards	= getFirstUnplacedCardInRows();
+      // remove duplicates
+      for (var i = 0; i < aces.length; i++) {
+        var dupeIndex  = frontCards.indexOf(aces[i]);
+        if (dupeIndex != -1) {
+          aces.splice(i, 1);
+          frontCards.splice(dupeIndex, 1);
+          console.log("Removing duplicate.");
+        }
+      }
 
-			// remove duplicates
-			for (var i = 0; i < aces.length; i++) {
-				var dupeIndex	= frontCards.indexOf(aces[i]);
-				if (dupeIndex != -1) {
-					aces.splice(i, 1);
-					frontCards.splice(dupeIndex, 1);
-					console.log("Removing duplicate.");
-				}
-			}
+      for (var i = 0; i < aces.length; i++) {
+        swapCards(aces[i], frontCards[i]);
+      }
 
-			for (var i = 0; i < aces.length; i++) {
-				swapCards(aces[i], frontCards[i]);
-			}
+    }
 
-		}
+    // Helpers
+    /////////////////////////////////////////////
 
-		// Helpers
-		/////////////////////////////////////////////
+    function getCard(suit, value) {
 
-		function getCard(suit, value) {
+      var loc  = findCard(suit, value);
 
-			var loc	= findCard(suit, value);
+      if (loc) {
+        return _rows[loc.row][loc.col];
+      } else {
+        return null;
+      }
 
-			if (loc) {
-				return _rows[loc.row][loc.col];
-			} else {
-				return null;
-			}
+    }
+    function findCard(suit, value) {
 
-		}
-		function findCard(suit, value) {
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
 
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
+          if (card.suit == suit && card.value == value) {
+            return {
+              row: i,
+              col: j
+            };
 
-					if (card.suit == suit && card.value == value) {
-						return {
-							row: i,
-							col: j
-						};
+          }
 
-					}
+        }
+      }
 
-				}
-			}
+      return null;
 
-			return null;
+    }
+    function getCardLoc(card) {
 
-		}
-		function getCardLoc(card) {
+      if (!card) return null;
 
-			if (!card) return null;
+      return findCard(card.suit, card.value);
 
-			return findCard(card.suit, card.value);
+    }
 
-		}
+    function getCardFromCardEl($el) {
 
-		function getCardFromCardEl($el) {
+      var el  = $el.get(0);
 
-			var el	= $el.get(0);
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
 
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
+          if (card.$el.get(0) == el) {
+            return card;
+          }
 
-					if (card.$el.get(0) == el) {
-						return card;
-					}
+        }
+      }
 
-				}
-			}
+      return null;
 
-			return null;
+    }
+    function getCardFromBlankEl($el) {
 
-		}
-		function getCardFromBlankEl($el) {
+      var row  = $el.data("row");
+      var col  = $el.data("col");
 
-			var row	= $el.data("row");
-			var col	= $el.data("col");
+      return _rows[row][col];
 
-			return _rows[row][col];
+    }
 
-		}
+    function getPrevCard(card) {
 
-		function getPrevCard(card) {
+      var loc    = findCard(card.suit, card.value);
 
-			var loc		= findCard(card.suit, card.value);
+      return _rows[loc.row][loc.col - 1];
 
-			return _rows[loc.row][loc.col - 1];
+    }
+    function getNextCard(card) {
 
-		}
-		function getNextCard(card) {
+      var loc    = findCard(card.suit, card.value);
 
-			var loc		= findCard(card.suit, card.value);
+      return _rows[loc.row][loc.col + 1];
 
-			return _rows[loc.row][loc.col + 1];
+    }
 
-		}
+    function getLowerCard(card) {
 
-		function getLowerCard(card) {
+      if (!card) return null;
 
-			if (!card) return null;
+      return getCard(card.suit, card.value - 1);
 
-			return getCard(card.suit, card.value - 1);
+    }
+    function getHigherCard(card) {
 
-		}
-		function getHigherCard(card) {
+      if (!card) return null;
 
-			if (!card) return null;
+      return getCard(card.suit, card.value + 1);
 
-			return getCard(card.suit, card.value + 1);
+    }
 
-		}
+    function getNextStartCard() {
 
-		function getNextStartCard() {
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+        for (var j = 1; j < row.length; j++) {
+          var card  = row[j];
+          if (card.value == 2) {
+            return card;
+          }
 
-				for (var j = 1; j < row.length; j++) {
-					var card	= row[j];
-					if (card.value == 2) {
-						return card;
-					}
+        }
+      }
 
-				}
-			}
+      return null;
 
-			return null;
+    }
 
-		}
+    function getMatchingAce(card) {
 
-		function getMatchingAce(card) {
+      if (!card) return null;
+      if (card.value == 1) return null;
 
-			if (!card) return null;
-			if (card.value == 1) return null;
+      if (card.value == 2) {
+        if (getCardLoc(card).col == 0) return null;
+        for (var i = 0; i < _rows.length; i++) {
+          if (_rows[i][0].value == 1) {
+            return _rows[i][0];
+          }
+        }
+        return null;
+      }
 
-			if (card.value == 2) {
-				if (getCardLoc(card).col == 0) return null;
-				for (var i = 0; i < _rows.length; i++) {
-					if (_rows[i][0].value == 1) {
-						return _rows[i][0];
-					}
-				}
-				return null;
-			}
+      var lowerCard  = getLowerCard(card);
 
-			var lowerCard	= getLowerCard(card);
+      if (!lowerCard) return null;
 
-			if (!lowerCard) return null;
+      var cardAfter  = getNextCard(lowerCard);
 
-			var cardAfter	= getNextCard(lowerCard);
+      if (cardAfter && cardAfter.value == 1) {
+        return cardAfter;
+      } else {
+        return null;
+      }
 
-			if (cardAfter && cardAfter.value == 1) {
-				return cardAfter;
-			} else {
-				return null;
-			}
+    }
+    function getMatchingCard(card) {
 
-		}
-		function getMatchingCard(card) {
+      if (!card) return null;
+      if (card.value != 1) return null;
 
-			if (!card) return null;
-			if (card.value != 1) return null;
+      var prevCard  = getPrevCard(card);
+      var newCard    = null;
 
-			var prevCard	= getPrevCard(card);
-			var newCard		= null;
+      if (prevCard) {
+        newCard    = getHigherCard(prevCard);
+      } else {
+        newCard    = getNextStartCard();
+      }
 
-			if (prevCard) {
-				newCard		= getHigherCard(prevCard);
-			} else {
-				newCard		= getNextStartCard();
-			}
+      return newCard;
 
-			return newCard;
+    }
 
-		}
+    function getAllCards() {
 
-		function getAllCards() {
+      var cards  = [];
 
-			var cards	= [];
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
+          cards.push(card);
+        }
+      }
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
-					cards.push(card);
-				}
-			}
+      return cards;
 
-			return cards;
+    }
+    function getUnplacedCards() {
 
-		}
-		function getUnplacedCards() {
+      var cards  = [];
 
-			var cards	= [];
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card    = row[j];
+          if (!card.placed) {
+            cards.push(card);
+          }
+        }
+      }
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
-				for (var j = 0; j < row.length; j++) {
-					var card		= row[j];
-					if (!card.placed) {
-						cards.push(card);
-					}
-				}
-			}
+      return cards;
 
-			return cards;
+    }
+    function getAces() {
 
-		}
-		function getAces() {
+      var cards  = [];
 
-			var cards	= [];
+      for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
+          if (card.value == 1) {
+            cards.push(card);
+          }
+        }
+      }
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
-					if (card.value == 1) {
-						cards.push(card);
-					}
-				}
-			}
+      return cards;
 
-			return cards;
+    }
+    function getFirstUnplacedCardInRows() {
 
-		}
-		function getFirstUnplacedCardInRows() {
+      var cards  = [];
 
-			var cards	= [];
+      rowLoop: for (var i = 0; i < _rows.length; i++) {
+        var row    = _rows[i];
 
-			rowLoop: for (var i = 0; i < _rows.length; i++) {
-				var row		= _rows[i];
+        colLoop: for (var j = 0; j < row.length; j++) {
+          var card    = row[j];
+          if (!card.placed) {
+            cards.push(card);
+            continue rowLoop;
+          }
+        }
+        cards.push(row[0]);
 
-				colLoop: for (var j = 0; j < row.length; j++) {
-					var card		= row[j];
-					if (!card.placed) {
-						cards.push(card);
-						continue rowLoop;
-					}
-				}
-				cards.push(row[0]);
+      }
 
-			}
 
+      return cards;
 
-			return cards;
+    }
 
-		}
+    function makeRowsCopy() {
 
-		function makeRowsCopy() {
+      var copy  = [];
 
-			var copy	= [];
+      for (var i = 0; i < _rows.length; i++) {
+        copy[i]  = _rows[i].slice(0);
+      }
 
-			for (var i = 0; i < _rows.length; i++) {
-				copy[i]	= _rows[i].slice(0);
-			}
+      return copy;
 
-			return copy;
+    }
 
-		}
+    function logRows() {
 
-		function logRows() {
+      var output  = "";
 
-			var output	= "";
+      for (var i = 0; i < _rows.length; i++) {
+        var row  = _rows[i];
+        for (var j = 0; j < row.length; j++) {
+          var card  = row[j];
+          var text  = getCardString(card.suit, card.value);
 
-			for (var i = 0; i < _rows.length; i++) {
-				var row	= _rows[i];
-				for (var j = 0; j < row.length; j++) {
-					var card	= row[j];
-					var text	= getCardString(card.suit, card.value);
+          output  += text + ", ";
 
-					output	+= text + ", ";
+        }
+        output  += "\n";
+      }
 
-				}
-				output	+= "\n";
-			}
+      console.log(output);
 
-			console.log(output);
+    }
+    function getCardString(suit, value) {
 
-		}
-		function getCardString(suit, value) {
+      var textSuit  = "";
+      var textValue  = "";
 
-			var textSuit	= "";
-			var textValue	= "";
+      switch (suit) {
+        case 0:
+          textSuit  = "D";
+          break;
+        case 1:
+          textSuit  = "C";
+          break;
+        case 2:
+          textSuit  = "H";
+          break;
+        case 3:
+          textSuit  = "S";
+          break;
+      }
 
-			switch (suit) {
-				case 0:
-					textSuit	= "D";
-					break;
-				case 1:
-					textSuit	= "C";
-					break;
-				case 2:
-					textSuit	= "H";
-					break;
-				case 3:
-					textSuit	= "S";
-					break;
-			}
+      if (value < 10) {
+        textValue  = "0" + value;
+      } else {
+        textValue  = "" + value;
+      }
 
-			if (value < 10) {
-				textValue	= "0" + value;
-			} else {
-				textValue	= "" + value;
-			}
+      return textValue + textSuit;
 
-			return textValue + textSuit;
+    }
 
-		}
 
+    // Init
+    /////////////////////////////////////////////
 
-		// Init
-		/////////////////////////////////////////////
+    initView();
+    initEvents();
 
-		initView();
-		initEvents();
+    startNewGame();
 
-		startNewGame();
 
+  }
 
-	}
+  // Add to namespace
+  /////////////////////////////////////////////
 
-	// Add to namespace
-	/////////////////////////////////////////////
-
-	montana.Montana		= Montana;
+  montana.Montana    = Montana;
 
 
 }());
