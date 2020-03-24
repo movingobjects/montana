@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+	<head>
+
+		<title>Montana Solitaire</title>
+		<link rel="stylesheet" type="text/css" href="resources/styles/css/style.css">
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:800">
+	</head>
+
+	<body>
+
+		<!--	// Templates
+				/////////////////////////////////////////////-->
+
+		<script id="template-blank" type="text/x-jsrender">
+			<li></li>
+		</script>
+
+		<script id="template-card" type="text/x-jsrender">
+			<li class="suit-{{:suit}} value-{{:value}}"></li>
+		</script>
+
+
+		<!--	// UI
+				/////////////////////////////////////////////-->
+
+
+		<section id="game">
+			<div class="controls">
+				<h1>Montana</h1>
+				<fieldset class="game">
+					<button id="new-game-btn">New Game</button>
+					<button id="restart-btn" disabled>Restart</button>
+				</fieldset>
+				<fieldset class="round">
+					<button id="undo-btn" disabled>Undo</button>
+					<button id="shuffle-btn" disabled>Shuffle</button>
+				</fieldset>
+				<fieldset class="options">
+					<label><input id="hints-checkbox" name="hints" type="checkbox"> Hints</label>
+				</fieldset>
+			</div>
+			<ul id="blanks"></ul>
+			<ul id="cards" class="unloaded"></ul>
+			<div id="board-block"></div>
+		</section>
+
+		<!--	// Scripts
+				/////////////////////////////////////////////-->
+
+		<script src="http://code.createjs.com/tweenjs-0.6.0.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+		<script src="resources/scripts/external/bwco-0.1.0.min.js"></script>
+		<script src="resources/scripts/external/jquery.easing.1.3.js"></script>
+		<script src="resources/scripts/external/jsrender.min.js"></script>
+
+		<script src="resources/scripts/montana/Montana.js"></script>
+
+
+	</body>
+
+</html>
